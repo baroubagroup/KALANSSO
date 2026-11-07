@@ -29,13 +29,8 @@ const SUBJECT_PERFORMANCE = [
 
 export default function AcademicReportsPage() {
   const [schoolSettings, setSchoolSettings] = useState<SchoolSettings>(DEFAULT_SCHOOL);
-  const [classList, setClassList] = useState<string[]>([
-    'Terminale D (Candidats BAC D)',
-    '3ème (Candidats Examen BEPC)',
-    '6ème',
-    'CM2 (Candidats Examen CEP)',
-  ]);
-  const [selectedClass, setSelectedClass] = useState('Terminale D (Candidats BAC D)');
+  const [classList, setClassList] = useState<string[]>([]);
+  const [selectedClass, setSelectedClass] = useState('');
 
   useEffect(() => {
     async function load() {

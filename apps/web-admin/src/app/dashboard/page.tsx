@@ -45,17 +45,7 @@ const DEFAULT_SCHOOL: SchoolConfig = {
   city: 'Ouagadougou',
   phone: '+226 70 20 30 40',
   motto: 'Discipline · Travail · Succès',
-  classrooms: [
-    { name: 'CP1 (Cours Préparatoire 1)', level: 'CP1', cycle: 'PRIMAIRE', capacity: 50, tuition: 55000 },
-    { name: 'CP2 (Cours Préparatoire 2)', level: 'CP2', cycle: 'PRIMAIRE', capacity: 50, tuition: 55000 },
-    { name: 'CE1 (Cours Élémentaire 1)',  level: 'CE1', cycle: 'PRIMAIRE', capacity: 50, tuition: 60000 },
-    { name: 'CE2 (Cours Élémentaire 2)',  level: 'CE2', cycle: 'PRIMAIRE', capacity: 50, tuition: 60000 },
-    { name: 'CM1 (Cours Moyen 1)',         level: 'CM1', cycle: 'PRIMAIRE', capacity: 50, tuition: 65000 },
-    { name: 'CM2 (Candidats Examen CEP)', level: 'CM2', cycle: 'PRIMAIRE', capacity: 50, tuition: 75000 },
-    { name: '6ème',                        level: '6ème', cycle: 'COLLEGE', capacity: 55, tuition: 85000 },
-    { name: '3ème (Candidats Examen BEPC)', level: '3ème', cycle: 'COLLEGE', capacity: 55, tuition: 110000 },
-    { name: 'Terminale D (Candidats BAC D)', level: 'Terminale D', cycle: 'LYCEE', capacity: 50, tuition: 170000 },
-  ],
+  classrooms: [],
 };
 
 function fmt(n: number) {
@@ -106,8 +96,8 @@ const ERP_MODULES = [
 
 export default function DashboardPage() {
   const [school, setSchool] = useState<SchoolConfig>(DEFAULT_SCHOOL);
-  const [liveEnrolled, setLiveEnrolled] = useState<number>(14);
-  const [liveCollected, setLiveCollected] = useState<number>(165000);
+  const [liveEnrolled, setLiveEnrolled] = useState<number>(0);
+  const [liveCollected, setLiveCollected] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -115,34 +105,34 @@ export default function DashboardPage() {
       try {
         // 1. Nombre réel d'élèves en base
         const { count } = await supabase.from('students').select('*', { count: 'exact', head: true });
-        if (count !== null) setLiveEnrolled(count);
+        setLiveEnrolled(count !== null && count !== undefined ? count : 0);
 
         // 2. Somme réelle des paiements encaissés
         const { data: payRows } = await supabase.from('payments').select('amount');
         if (payRows) {
           const sum = payRows.reduce((acc, p) => acc + Number(p.amount || 0), 0);
           setLiveCollected(sum);
+        } else {
+          setLiveCollected(0);
         }
 
         // 3. Charger l'école et toutes les classes réelles de Supabase
         const { data: schoolRow } = await supabase.from('schools').select('*').limit(1).single();
         const { data: clsRows } = await supabase.from('classrooms').select('*').order('name');
 
-        if (clsRows && clsRows.length > 0) {
-          setSchool({
-            schoolName: schoolRow?.name || 'Complexe Scolaire Wend-Manegda',
-            city: schoolRow?.city || 'Ouagadougou',
-            phone: schoolRow?.phone || '+226 70 20 30 40',
-            motto: schoolRow?.motto || 'Discipline · Travail · Succès',
-            classrooms: clsRows.map((c: any) => ({
-              name: c.name,
-              level: c.level,
-              cycle: c.cycle,
-              capacity: c.capacity || 50,
-              tuition: Number(c.tuition_fee) || 60000,
-            })),
-          });
-        }
+        setSchool({
+          schoolName: schoolRow?.name || 'Établissement Scolaire',
+          city: schoolRow?.city || 'Ouagadougou',
+          phone: schoolRow?.phone || '',
+          motto: schoolRow?.motto || 'Discipline · Travail · Succès',
+          classrooms: (clsRows || []).map((c: any) => ({
+            name: c.name,
+            level: c.level,
+            cycle: c.cycle,
+            capacity: c.capacity || 50,
+            tuition: Number(c.tuition_fee) || 0,
+          })),
+        });
       } catch (e) {
         console.error('Erreur chargement dashboard:', e);
       } finally {

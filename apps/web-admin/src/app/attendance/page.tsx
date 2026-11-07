@@ -63,16 +63,13 @@ export default function AttendancePage() {
           setClassrooms(data);
           setSelectedClassId(data[0].id);
         } else {
-          const fb = [
-            { id: '21c81fb4-8218-4e27-9474-9b9ce6392e27', name: 'Terminale D (Candidats BAC D)' },
-            { id: '6b97da6d-3324-41e7-bcd9-7e39e3e68240', name: '3ème (Candidats Examen BEPC)' },
-            { id: '856fd499-61e7-436e-9622-d00fab607122', name: 'CM2 (Candidats Examen CEP)' },
-          ];
-          setClassrooms(fb);
-          setSelectedClassId(fb[0].id);
+          setClassrooms([]);
+          setSelectedClassId('');
         }
       } catch (e) {
         console.error('Erreur chargement classes:', e);
+        setClassrooms([]);
+        setSelectedClassId('');
       }
     }
     loadClassrooms();

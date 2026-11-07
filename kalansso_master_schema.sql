@@ -196,6 +196,18 @@ CREATE TABLE IF NOT EXISTS public.sanctions_records (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 8.4. Présences journalières & appels de classe (Feuilles d'appel)
+CREATE TABLE IF NOT EXISTS public.attendances (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    school_id UUID REFERENCES public.schools(id) ON DELETE CASCADE,
+    student_id UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    session VARCHAR(32) NOT NULL DEFAULT 'MATIN', -- 'MATIN', 'SOIR'
+    status VARCHAR(32) NOT NULL DEFAULT 'PRESENT' CHECK (status IN ('PRESENT', 'ABS', 'ABJ', 'RETARD')),
+    notified BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ==============================================================================
 -- 9. CORPS ENSEIGNANT, RH & DÉCOMPTE DES VACATIONS
 -- ==============================================================================
@@ -259,6 +271,7 @@ CREATE INDEX IF NOT EXISTS idx_payments_date ON public.payments(payment_date);
 CREATE INDEX IF NOT EXISTS idx_staff_matricule ON public.staff_members(matricule);
 CREATE INDEX IF NOT EXISTS idx_assignments_staff ON public.teaching_assignments(staff_id);
 CREATE INDEX IF NOT EXISTS idx_assignments_classroom ON public.teaching_assignments(classroom_id);
+CREATE INDEX IF NOT EXISTS idx_attendances_student_date ON public.attendances(student_id, date);
 
 -- ==============================================================================
 -- 11. POLITIQUES DE SÉCURITÉ ROW LEVEL SECURITY (RLS)
@@ -272,6 +285,7 @@ ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.passage_tickets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.corvees_records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sanctions_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.attendances ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.teaching_assignments ENABLE ROW LEVEL SECURITY;
 
@@ -285,6 +299,7 @@ CREATE POLICY "Full access to payments" ON public.payments FOR ALL USING (true);
 CREATE POLICY "Full access to passage_tickets" ON public.passage_tickets FOR ALL USING (true);
 CREATE POLICY "Full access to corvees_records" ON public.corvees_records FOR ALL USING (true);
 CREATE POLICY "Full access to sanctions_records" ON public.sanctions_records FOR ALL USING (true);
+CREATE POLICY "Full access to attendances" ON public.attendances FOR ALL USING (true);
 CREATE POLICY "Full access to staff_members" ON public.staff_members FOR ALL USING (true);
 CREATE POLICY "Full access to teaching_assignments" ON public.teaching_assignments FOR ALL USING (true);
 

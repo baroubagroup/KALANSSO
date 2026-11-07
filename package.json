@@ -1,0 +1,29 @@
+{
+  "name": "kalansso-os-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Système d'Exploitation Intégré de l'Établissement Scolaire Africain",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "keywords": [
+    "education",
+    "school-os",
+    "erp",
+    "africa",
+    "burkina-faso",
+    "mobile-money",
+    "offline-first"
+  ],
+  "author": "kalansso os Core Team",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0"
+  }
+}

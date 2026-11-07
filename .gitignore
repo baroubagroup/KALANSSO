@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js build & caches
+.next/
+out/
+build/
+dist/
+
+# Local Environment & Secrets (NEVER push API keys)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# Logs & Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+audit_*.js
+check-*.js
+clean-*.js
+test-*.js
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.tsbuildinfo
+next-env.d.ts

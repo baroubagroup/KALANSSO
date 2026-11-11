@@ -140,7 +140,9 @@ CREATE TABLE IF NOT EXISTS public.payments (
     student_id UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
     receipt_number VARCHAR(64) NOT NULL UNIQUE, -- Ex: 'REC-2026-0089'
     amount NUMERIC(12, 2) NOT NULL,
-    payment_method VARCHAR(32) DEFAULT 'ESPECES' CHECK (payment_method IN ('ESPECES', 'ORANGE_MONEY', 'MOOV_MONEY', 'VIREMENT', 'CHEQUE')),
+    channel VARCHAR(32) DEFAULT 'CASH', -- 'CASH', 'ORANGE_MONEY', 'MOOV_MONEY', 'VIREMENT', 'CHEQUE'
+    payment_method VARCHAR(32) DEFAULT 'ESPECES',
+    payer_phone VARCHAR(64),
     payment_date TIMESTAMPTZ DEFAULT NOW(),
     tranche_applied VARCHAR(32) DEFAULT 'TRANCHE_1',
     cashier_name VARCHAR(150) NOT NULL,
